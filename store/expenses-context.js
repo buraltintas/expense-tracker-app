@@ -70,7 +70,7 @@ function ExpensesContextProvider({ children }) {
   }
 
   function deleteExpense(id) {
-    dispatch({ type: 'DELETE', payload: id });
+    dispatch({ type: 'DELETE', payload: { id } });
   }
 
   function updateExpense(id, expenseData) {
