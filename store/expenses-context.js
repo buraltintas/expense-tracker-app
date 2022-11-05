@@ -1,42 +1,10 @@
 import { createContext } from 'react';
 import { useReducer } from 'react';
 
-const DUMMY_EXPENSES = [
-  {
-    id: 'e1',
-    description: 'a pair of shoes',
-    amount: 59.99,
-    date: new Date('2022/10/27'),
-  },
-  {
-    id: 'e2',
-    description: 'a pair of trousers',
-    amount: 89.69,
-    date: new Date('2022/10/25'),
-  },
-  {
-    id: 'e3',
-    description: 'some bananas',
-    amount: 9.69,
-    date: new Date('2022/11/02'),
-  },
-  {
-    id: 'e4',
-    description: 'a book',
-    amount: 19.69,
-    date: new Date('2022/10/29'),
-  },
-  {
-    id: 'e5',
-    description: 'a guitar',
-    amount: 289.69,
-    date: new Date('2022/09/28'),
-  },
-];
-
 export const ExpensesContext = createContext({
   expenses: [],
   addExpense: ({ description, amount, date }) => {},
+  setExpenses: (expenses) => {},
   deleteExpense: (id) => {},
   updateExpense: (id, { description, amount, date }) => {},
 });
@@ -46,6 +14,10 @@ function expensesReducer(state, action) {
     case 'ADD':
       const id = new Date().toString() + Math.random().toString();
       return [{ ...action.payload, id: id }, ...state];
+
+    case 'SET':
+      return action.payload;
+
     case 'UPDATE':
       const updatableExpenseIndex = state.findIndex(
         (expense) => expense.id === action.payload.id
@@ -55,18 +27,24 @@ function expensesReducer(state, action) {
       const updatedExpenses = [...state];
       updatedExpenses[updatableExpenseIndex] = updatedItem;
       return updatedExpenses;
+
     case 'DELETE':
       return state.filter((expense) => expense.id !== action.payload.id);
+
     default:
       return state;
   }
 }
 
 function ExpensesContextProvider({ children }) {
-  const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES);
+  const [expensesState, dispatch] = useReducer(expensesReducer, []);
 
   function addExpense(expenseData) {
     dispatch({ type: 'ADD', payload: expenseData });
+  }
+
+  function setExpenses(expenses) {
+    dispatch({ type: 'SET', payload: expenses });
   }
 
   function deleteExpense(id) {
@@ -80,6 +58,7 @@ function ExpensesContextProvider({ children }) {
   const value = {
     expenses: expensesState,
     addExpense: addExpense,
+    setExpenses: setExpenses,
     deleteExpense: deleteExpense,
     updateExpense: updateExpense,
   };

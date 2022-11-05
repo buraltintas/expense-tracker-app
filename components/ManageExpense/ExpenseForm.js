@@ -31,7 +31,7 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
   function submitHandler() {
     const expenseData = {
       amount: +inputs.amount.value,
-      date: new Date(inputs.date.value),
+      date: getFormattedDate(new Date(inputs.date.value)),
       description: inputs.description.value,
     };
 
